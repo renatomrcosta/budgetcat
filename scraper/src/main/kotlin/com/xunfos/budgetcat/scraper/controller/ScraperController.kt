@@ -1,6 +1,7 @@
 package com.xunfos.budgetcat.scraper.controller
 
 import com.xunfos.budgetcat.scraper.handler.ScraperHandler
+import com.xunfos.budgetcat.scraper.model.Transaction
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,12 +18,12 @@ class ScraperController(
         @RequestParam("provider") provider: String?,
         @RequestParam("start_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate,
         @RequestParam("end_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate
-    ): ResponseEntity<String> {
+    ): ResponseEntity<List<Transaction>> {
         val response = scraperHandler(
             provider = provider,
             startDate = startDate,
             endDate = endDate
-        ).also(::println)
-        return ResponseEntity.ok("Good")
+        )
+        return ResponseEntity.ok(response)
     }
 }

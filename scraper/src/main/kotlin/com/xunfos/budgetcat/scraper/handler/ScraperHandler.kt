@@ -22,7 +22,7 @@ class ScraperHandler(
                 "n26", "N26", null -> n26Client.fetchTransactions(
                     startDate = startDate,
                     endDate = endDate
-                )
+                ) // TODO map to generic transaction
                 else -> error("Invalid provider")
             }
         }

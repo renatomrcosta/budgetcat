@@ -1,9 +1,10 @@
 package com.xunfos.budgetcat.scraper.client
 
 import com.xunfos.budgetcat.scraper.config.N26Config
+import com.xunfos.budgetcat.scraper.model.Transaction
 import com.xunfos.budgetcat.scraper.session.N26Session
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.reactive.awaitLast
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.http.HttpHeaders
@@ -25,7 +26,7 @@ class N26Client(
     suspend fun fetchTransactions(
         startDate: LocalDate,
         endDate: LocalDate
-    ): String = coroutineScope {
+    ): List<Transaction> = coroutineScope {
         session.executeTransaction { token ->
             WebClient
                 .builder()
@@ -45,8 +46,9 @@ class N26Client(
                     )
                 )
                 .awaitExchange()
-                .bodyToMono(String::class.java)
-                .awaitFirst()
+                .bodyToFlux(Transaction::class.java)
+                .collectList()
+                .awaitLast()
         }
     }
 
