@@ -1,7 +1,7 @@
 package com.xunfos.budgetcat.scraper.client
 
-import com.xunfos.budgetcat.scraper.session.N26Session
 import com.xunfos.budgetcat.scraper.config.N26Config
+import com.xunfos.budgetcat.scraper.session.N26Session
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.reactive.awaitFirst
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitExchange
+import java.time.LocalDate
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -21,8 +22,10 @@ class N26Client(
         N26Session.newSession(n26AuthClient = n26AuthClient)
     }
 
-    suspend fun fetchTransactions(): String = coroutineScope {
-        // Get session
+    suspend fun fetchTransactions(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): String = coroutineScope {
         session.executeTransaction { token ->
             WebClient
                 .builder()
@@ -33,7 +36,14 @@ class N26Client(
                 }
                 .build()
                 .get()
-                .uri(TRANSACTIONS_URI)
+                .uri(
+                    TRANSACTIONS_URI,
+                    mapOf<String, Any>(
+                        LIMIT_PARAMETER to LIMIT_PARAMETER_VALUE,
+                        FROM_PARAMETER to startDate,
+                        TO_PARAMETER to endDate
+                    )
+                )
                 .awaitExchange()
                 .bodyToMono(String::class.java)
                 .awaitFirst()
@@ -42,5 +52,9 @@ class N26Client(
 
     companion object {
         const val TRANSACTIONS_URI = "api/smrt/transactions"
+        const val FROM_PARAMETER = "from"
+        const val TO_PARAMETER = "to"
+        const val LIMIT_PARAMETER = "limit"
+        const val LIMIT_PARAMETER_VALUE = "2000"
     }
 }
