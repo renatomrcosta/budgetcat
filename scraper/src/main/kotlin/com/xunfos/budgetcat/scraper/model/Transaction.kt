@@ -33,5 +33,5 @@ data class Transaction(
     val txnCondition: String?,
     val smartLinkId: UUID?,
     val linkId: UUID?,
-    val confirmed: BigInteger
+    val confirmed: BigInteger?
 )

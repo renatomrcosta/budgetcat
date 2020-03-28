@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  scraper:
+    build:
+      ./scraper
+    image:
+      budgetcat-scraper
+    ports:
+      - 9999:8080
+    expose:
+      - 8080
+    env_file:
+      - ./scraper/.env
