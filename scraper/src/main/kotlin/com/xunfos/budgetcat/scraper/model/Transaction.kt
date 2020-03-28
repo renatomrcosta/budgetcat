@@ -1,37 +1,42 @@
 package com.xunfos.budgetcat.scraper.model
 
-import java.math.BigInteger
+import org.springframework.boot.configurationprocessor.json.JSONObject
+import java.time.Instant
 import java.util.UUID
 
-enum class TransactionCategory(val value: String) {
-    FOOD_AND_GROCERIES("micro-v2-food-groceries")
-}
+sealed class Transaction {
+    data class N26Transaction(
+        val id: UUID,
+        val userId: UUID,
+        val type: String,
+        val amount: Double,
+        val currencyCode: String,
+        val originalAmount: Double,
+        val originalCurrency: String?,
+        val exchangeRate: Double,
+        val visibleTS: Instant,
+        val merchantCity: String?,
+        val merchantName: String?,
+        val recurring: Boolean,
+        val mcc: Int?,
+        val mccGroup: Int?,
+        val partnerAccountIsSepa: Boolean,
+        val accountId: UUID,
+        val category: String,
+        val cardId: UUID?,
+        val userCertified: Instant,
+        val pending: Boolean,
+        val transactionNature: String,
+        val createdTS: Instant,
+        val merchantCountry: Int,
+        val merchantCountryCode: Int,
+        val txnCondition: String?,
+        val smartLinkId: UUID?,
+        val linkId: UUID?,
+        val confirmed: Instant?
+    ) : Transaction()
 
-data class Transaction(
-    val id: UUID,
-    val userId: UUID,
-    // val type: "AA",
-    val amount: Double,
-    val currencyCode: String,
-    val originalAmount: Double,
-    val originalCurrency: String?,
-    val exchangeRate: Double,
-    val visibleTS: BigInteger,
-    val merchantCity: String?,
-    val merchantName: String?,
-    val recurring: Boolean,
-    val partnerAccountIsSepa: Boolean,
-    val accountId: UUID,
-    // val category: TransactionCategory,
-    val category: String,
-    val cardId: UUID?,
-    val userCertified: BigInteger,
-    val pending: Boolean,
-    val transactionNature: String,
-    val createdTS: BigInteger,
-    val merchantCountry: Int,
-    val txnCondition: String?,
-    val smartLinkId: UUID?,
-    val linkId: UUID?,
-    val confirmed: BigInteger?
-)
+    data class GenericTransaction(
+        val jsonResponse: JSONObject
+    ) : Transaction()
+}

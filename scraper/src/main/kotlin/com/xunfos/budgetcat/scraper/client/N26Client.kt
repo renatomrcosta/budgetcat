@@ -18,7 +18,7 @@ import java.time.LocalDate
 class N26Client(
     private val n26AuthClient: N26AuthClient,
     private val n26Config: N26Config
-) {
+) : TransactionClient() {
     private val session: N26Session by lazy {
         N26Session.newSession(n26AuthClient = n26AuthClient)
     }
@@ -46,7 +46,7 @@ class N26Client(
                     )
                 )
                 .awaitExchange()
-                .bodyToFlux(Transaction::class.java)
+                .bodyToFlux(Transaction.N26Transaction::class.java)
                 .collectList()
                 .awaitLast()
         }
