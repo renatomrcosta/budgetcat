@@ -1,6 +1,7 @@
 package com.xunfos.budgetcat.scraper.model
 
 import org.springframework.boot.configurationprocessor.json.JSONObject
+import java.sql.Timestamp
 import java.time.Instant
 import java.util.UUID
 
@@ -14,7 +15,7 @@ sealed class Transaction {
         val originalAmount: Double,
         val originalCurrency: String?,
         val exchangeRate: Double,
-        val visibleTS: Instant,
+        val visibleTS: Timestamp,
         val merchantCity: String?,
         val merchantName: String?,
         val recurring: Boolean,
@@ -24,16 +25,16 @@ sealed class Transaction {
         val accountId: UUID,
         val category: String,
         val cardId: UUID?,
-        val userCertified: Instant,
+        val userCertified: Timestamp,
         val pending: Boolean,
         val transactionNature: String,
-        val createdTS: Instant,
+        val createdTS: Timestamp,
         val merchantCountry: Int,
         val merchantCountryCode: Int,
         val txnCondition: String?,
         val smartLinkId: UUID?,
         val linkId: UUID?,
-        val confirmed: Instant?
+        val confirmed: Timestamp?
     ) : Transaction()
 
     data class GenericTransaction(
