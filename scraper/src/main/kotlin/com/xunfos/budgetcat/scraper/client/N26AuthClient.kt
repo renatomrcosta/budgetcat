@@ -4,6 +4,7 @@ import com.xunfos.budgetcat.scraper.config.N26Config
 import com.xunfos.budgetcat.scraper.model.BearerTokenResponse
 import com.xunfos.budgetcat.scraper.model.MFATokenResponse
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.reactive.awaitFirst
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -32,12 +33,12 @@ class N26AuthClient(
             .uri(TOKEN_URI)
             .body(
                 BodyInserters.fromMultipartData(
-                LinkedMultiValueMap<String, String>().apply {
-                    add("grant_type", GRANT_TYPE_PASSWORD)
-                    add("username", n26Config.username)
-                    add("password", n26Config.password)
-                }
-            ))
+                    LinkedMultiValueMap<String, String>().apply {
+                        add("grant_type", GRANT_TYPE_PASSWORD)
+                        add("username", n26Config.username)
+                        add("password", n26Config.password)
+                    }
+                ))
             .headers {
                 it.set(
                     HttpHeaders.CONTENT_TYPE,
@@ -82,34 +83,34 @@ class N26AuthClient(
         }
 
     suspend fun confirm2FA(mfaTokenResponse: MFATokenResponse): BearerTokenResponse =
-        kotlinx.coroutines.coroutineScope {
+        coroutineScope {
             val client = buildDefaultClient()
                 .post()
                 .uri(TOKEN_URI)
                 .body(
-                    org.springframework.web.reactive.function.BodyInserters.fromMultipartData(
-                    org.springframework.util.LinkedMultiValueMap<String, String>().apply {
-                        add("grant_type", GRANT_TYPE_MFA)
-                        add("mfaToken", mfaTokenResponse.mfaToken.toString())
-                    }
-                ))
+                    BodyInserters.fromMultipartData(
+                        LinkedMultiValueMap<String, String>().apply {
+                            add("grant_type", GRANT_TYPE_MFA)
+                            add("mfaToken", mfaTokenResponse.mfaToken.toString())
+                        }
+                    ))
                 .headers {
                     it.set(
-                        org.springframework.http.HttpHeaders.CONTENT_TYPE,
-                        org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE
+                        HttpHeaders.CONTENT_TYPE,
+                        MediaType.APPLICATION_FORM_URLENCODED_VALUE
                     )
                 }
 
             // retries 12 times every 5 seconds (60 seconds total wait time)
             // until the login is approved in a authorized device (like the users phone)
             for (i in 1..12) {
-                val response = client
+                client
                     .awaitExchange()
                     .run {
                         if (statusCode().is2xxSuccessful) {
                             return@coroutineScope bodyToMono(com.xunfos.budgetcat.scraper.model.BearerTokenResponse::class.java).awaitFirst()
                         } else {
-                            kotlinx.coroutines.delay(5_000)
+                            delay(5_000)
                         }
                     }
             }
