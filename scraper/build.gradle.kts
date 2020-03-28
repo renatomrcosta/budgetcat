@@ -9,7 +9,7 @@ plugins {
 
 group = "com.xunfos.budgetcat"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_13
 
 val developmentOnly by configurations.creating
 configurations {
