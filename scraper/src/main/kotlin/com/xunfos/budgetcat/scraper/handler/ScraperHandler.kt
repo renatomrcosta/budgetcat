@@ -1,6 +1,7 @@
 package com.xunfos.budgetcat.scraper.handler
 
 import com.xunfos.budgetcat.scraper.client.N26Client
+import com.xunfos.budgetcat.scraper.model.Transaction
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import java.time.LocalDate
@@ -13,16 +14,16 @@ class ScraperHandler(
         provider: String?,
         startDate: LocalDate,
         endDate: LocalDate
-    ) =
+    ): List<Transaction> =
         runBlocking {
             if (startDate.isAfter(endDate)) {
-                error("Invalid date paramters. Please retry")
+                error("Invalid date parameters. Please retry")
             }
-            when (provider) {
-                "n26", "N26", null -> n26Client.fetchTransactions(
+            when (provider?.toUpperCase()) {
+                "N26", null -> n26Client.fetchTransactions(
                     startDate = startDate,
                     endDate = endDate
-                ) // TODO map to generic transaction
+                )
                 else -> error("Invalid provider")
             }
         }
