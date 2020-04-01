@@ -2,6 +2,8 @@ version: '3'
 
 services:
   scraper:
+    networks:
+      - scraper
     build:
       ./scraper
     image:
@@ -12,3 +14,29 @@ services:
       - 8080
     env_file:
       - ./scraper/.env
+
+  storage:
+    networks:
+      - storage
+    build:
+      ./storage
+    image:
+      budgetcat-storage
+    ports:
+      - 9998:8080
+    expose:
+      - 8080
+    env_file:
+      - ./storage/.env
+
+  db:
+    networks:
+      - storage
+    image:
+      mongo
+    env_file:
+      - ./storage/.env
+
+networks:
+  storage:
+  scraper:

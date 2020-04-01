@@ -1,0 +1,7 @@
+build/
+.gradle/
+README.md
+HELP.md
+gradlew.bat
+.env
+.dockerignore

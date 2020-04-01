@@ -31,9 +31,6 @@ out/
 ### VS Code ###
 .vscode/
 
-### IDEA ###
-.idea/
-
-### Gradle ###
-gradlew.bat
+### Gradle $$$
 gradlew
+gradlew.bat

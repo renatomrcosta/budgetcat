@@ -7,4 +7,7 @@ run:
 run-scraper:
 	docker-compose up scraper
 
-.PHONY: build run run-scraper
+run-storage:
+	docker-compose up storage
+
+.PHONY: build run run-scraper run-storage
