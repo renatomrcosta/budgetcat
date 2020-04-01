@@ -8,6 +8,9 @@ run-scraper:
 	docker-compose up scraper
 
 run-storage:
-	docker-compose up storage
+	docker-compose up storage db
 
-.PHONY: build run run-scraper run-storage
+run-dependencies:
+	docker-compose up db
+
+.PHONY: build run run-scraper run-storage run-dependencies
