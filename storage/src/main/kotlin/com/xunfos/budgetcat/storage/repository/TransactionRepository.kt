@@ -1,23 +1,23 @@
 package com.xunfos.budgetcat.storage.repository
 
-import com.xunfos.budgetcat.storage.config.DBConfig
+import com.xunfos.budgetcat.storage.model.Transaction
 import kotlinx.coroutines.coroutineScope
+import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import java.util.UUID
 
+@Repository
+interface TransactionCrud : CrudRepository<Transaction, UUID>
+
 @Service
 class TransactionRepository(
-    private val dbConfig: DBConfig
+    private val transactionCrud: TransactionCrud
 ) {
     suspend fun registerTransaction(
-        id: UUID,
-        transaction: Any
-    ): Unit = coroutineScope {
-        println(dbConfig.database)
-        println(dbConfig.host)
-        println(dbConfig.port)
-        println(dbConfig.username)
-        println(dbConfig.password)
+        transaction: Transaction
+    ) = coroutineScope {
+        transactionCrud.save(transaction)
     }
 
     suspend fun readTransactions() = coroutineScope {
