@@ -16,6 +16,8 @@ services:
       - ./scraper/.env
 
   storage:
+    env_file:
+      - ./storage/.env
     networks:
       - storage
     build:
@@ -26,17 +28,24 @@ services:
       - 9998:8080
     expose:
       - 8080
-    env_file:
-      - ./storage/.env
 
   db:
+    image:
+      postgres
     networks:
       - storage
-    image:
-      mongo
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
     env_file:
       - ./storage/.env
+    volumes:
+      - ./budgetcat_postgres_data_container:/data/budgetcat/db
 
 networks:
   storage:
   scraper:
+
+volumes:
+  budgetcat_postgres_data_container:

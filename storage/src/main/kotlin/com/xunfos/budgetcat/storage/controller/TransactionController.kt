@@ -1,20 +1,37 @@
 package com.xunfos.budgetcat.storage.controller
 
+import com.xunfos.budgetcat.storage.handler.ListTransactionHandler
 import com.xunfos.budgetcat.storage.handler.RegisterTransactionHandler
-import com.xunfos.budgetcat.storage.model.Transaction
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
+import javax.websocket.server.PathParam
 
-@RestController("/transaction")
+@RestController
+@RequestMapping("/transaction")
 class TransactionController(
-    private val registerTransactionHandler: RegisterTransactionHandler
+    private val registerTransactionHandler: RegisterTransactionHandler,
+    private val listTransactionHandler: ListTransactionHandler
 ) {
-
     @PostMapping
-    fun registerTransaction(@RequestBody transaction: Transaction): ResponseEntity.BodyBuilder {
-        registerTransactionHandler(transaction = transaction)
-        return ResponseEntity.ok()
+    fun registerTransaction(
+        @PathParam("id") id: UUID,
+        @RequestBody transaction: Any
+    ): ResponseEntity<UUID> {
+        registerTransactionHandler(
+            id = id,
+            transaction = transaction
+        )
+        return ResponseEntity.ok(id)
+    }
+
+    @GetMapping
+    fun listTransactions(): ResponseEntity<List<Any>> {
+        val response = listTransactionHandler.invoke()
+        return ResponseEntity.ok(response)
     }
 }

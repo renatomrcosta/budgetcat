@@ -1,4 +1,4 @@
-package com.xunfos.budgetcat.scraper.config
+package com.xunfos.budgetcat.storage.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -12,9 +12,10 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
         http
             .csrf().disable()
             .authorizeRequests()
-            .antMatchers("/scrape")
+            .antMatchers("/transaction")
             .authenticated()
             .and()
             .httpBasic()
+
     }
 }

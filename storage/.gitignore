@@ -32,7 +32,5 @@ out/
 .vscode/
 
 ### Gradle ###
-gradlew
-gradlew.bat
 ./gradle/
 gradle/

@@ -1,8 +1,6 @@
 package com.xunfos.budgetcat.scraper.model
 
-import org.springframework.boot.configurationprocessor.json.JSONObject
 import java.sql.Timestamp
-import java.time.Instant
 import java.util.UUID
 
 sealed class Transaction {
@@ -38,6 +36,6 @@ sealed class Transaction {
     ) : Transaction()
 
     data class GenericTransaction(
-        val jsonResponse: JSONObject
+        val response: String
     ) : Transaction()
 }
