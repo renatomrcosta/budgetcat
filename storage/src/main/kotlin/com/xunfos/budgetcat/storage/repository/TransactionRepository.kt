@@ -14,6 +14,10 @@ class TransactionRepository(
         transaction: Any
     ): Unit = coroutineScope {
         println(dbConfig.database)
+        println(dbConfig.host)
+        println(dbConfig.port)
+        println(dbConfig.username)
+        println(dbConfig.password)
     }
 
     suspend fun readTransactions() = coroutineScope {

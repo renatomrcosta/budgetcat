@@ -26,6 +26,8 @@ services:
       budgetcat-storage
     ports:
       - 9998:8080
+    depends_on:
+      - db
     expose:
       - 8080
 

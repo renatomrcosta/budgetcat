@@ -10,5 +10,8 @@ data class DBConfig(
     var password: String = "",
     var database: String = "",
     var host: String = "",
-    var port: Int = 5432
-)
+    var port: String = ""
+) {
+    val url: String
+        get() = "jdbc:postgresql://$host:$port/$database"
+}
