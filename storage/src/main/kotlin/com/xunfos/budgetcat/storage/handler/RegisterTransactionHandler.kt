@@ -11,9 +11,8 @@ class RegisterTransactionHandler(
     private val transactionRepository: TransactionRepository
 ) {
     operator fun invoke(id: UUID, transaction: Any) = runBlocking {
-        val convertedTransaction = Transaction.create(id = id, transaction = transaction)
         transactionRepository.registerTransaction(
-            transaction = convertedTransaction
+            transaction = Transaction.create(id = id, data = transaction)
         )
     }
 }
