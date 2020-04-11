@@ -20,6 +20,7 @@ services:
       - ./storage/.env
     networks:
       - storage
+      - db
     build:
       ./storage
     image:
@@ -35,7 +36,7 @@ services:
     image:
       postgres
     networks:
-      - storage
+      - db
     ports:
       - 5432:5432
     expose:
@@ -45,9 +46,29 @@ services:
     volumes:
       - ./budgetcat_postgres_data_container:/data/budgetcat/db
 
+  worker:
+    env_file:
+      - ./worker/.env
+    networks:
+      - storage
+      - scraper
+    image:
+      budgetcat-worker
+    build:
+      ./worker
+    ports:
+      - 9997:8080
+    depends_on:
+      - storage
+      - scraper
+    expose:
+      - 8080
+
+
 networks:
   storage:
   scraper:
+  db:
 
 volumes:
   budgetcat_postgres_data_container:
