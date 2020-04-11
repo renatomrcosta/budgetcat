@@ -8,9 +8,9 @@ For the initial commits, very specific implementations will be used. I can gener
 
 * Scraper - connects to the bank / transaction holder and returns the data via a GET endpoint
 
-* Storage (TODO) - Stores transaction data somewhere
+* Storage - Stores transaction data in a Postgres DB
 
-* Visualizer (TODO) - Sees / analyses stored data
+* Worker - Bridges the scraper / storage together
 
 
 # Setup
