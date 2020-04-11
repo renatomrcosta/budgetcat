@@ -17,12 +17,12 @@ class StorageClient(
             .baseUrl(storageConfig.host)
             .build()
             .post()
-            .uri(
-                STORAGE_URI,
-                mapOf<String, Any>(
-                    ID_PARAMETER to id
-                )
-            )
+            .uri {
+                it
+                    .path(STORAGE_URI)
+                    .queryParam(ID_PARAMETER, id)
+                    .build()
+            }
             .bodyValue(data)
             .headers {
                 it.setBasicAuth(storageConfig.username, storageConfig.password)

@@ -13,7 +13,10 @@ run-scraper:
 run-storage:
 	docker-compose up storage db
 
+run-worker:
+	docker-compose up worker
+
 run-dependencies:
 	docker-compose up db
 
-.PHONY: build run run-scraper run-storage run-dependencies build-and-run
+.PHONY: build run run-scraper run-storage run-dependencies build-and-run run-worker

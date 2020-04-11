@@ -6,8 +6,6 @@ import com.xunfos.budgetcat.worker.model.WorkerOptions
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.reactive.awaitLast
 import org.springframework.stereotype.Service
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitExchange
 import java.time.LocalDate
@@ -21,28 +19,30 @@ class ScraperClient(
         startDate: LocalDate,
         endDate: LocalDate,
         limit: Int?
-    ) = coroutineScope {
-        WebClient
+    ): List<Transaction.N26Transaction> = coroutineScope {
+        val transaction = WebClient
             .builder()
             .baseUrl(scraperConfig.host)
             .build()
-            .post()
-            .uri(
-                SCRAPER_URI,
-                mapOf<String, Any>(
-                    PROVIDER_PARAMETER to provider,
-                    LIMIT_PARAMETER to (limit ?: DEFAULT_LIMIT),
-                    START_DATE_PARAMETER to startDate,
-                    END_DATE_PARAMETER to endDate
-                )
-            )
+            .get()
+            .uri {
+                it.path(SCRAPER_URI)
+                    .queryParam(START_DATE_PARAMETER, startDate)
+                    .queryParam(END_DATE_PARAMETER, endDate)
+                    .queryParam(PROVIDER_PARAMETER, provider.value)
+                    .queryParam(LIMIT_PARAMETER, limit ?: DEFAULT_LIMIT)
+                    .build()
+            }
             .headers {
                 it.setBasicAuth(scraperConfig.username, scraperConfig.password)
             }
+
+        transaction
             .awaitExchange()
             .bodyToFlux(Transaction.N26Transaction::class.java)
             .collectList()
             .awaitLast()
+
     }
 
     companion object {
