@@ -12,7 +12,7 @@ class RegisterTransactionHandler(
 ) {
     operator fun invoke(id: UUID, transaction: Any) = runBlocking {
         transactionRepository.registerTransaction(
-            transaction = Transaction.create(id = id, data = transaction)
+            transaction = Transaction(id = id, data = transaction)
         )
     }
 }
