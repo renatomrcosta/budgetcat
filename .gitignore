@@ -1,3 +1,9 @@
 .idea/
 
 **/.env
+
+### Gradle ###
+gradlew
+gradlew.bat
+./gradle
+gradle/

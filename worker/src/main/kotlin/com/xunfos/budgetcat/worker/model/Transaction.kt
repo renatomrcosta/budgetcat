@@ -1,4 +1,4 @@
-package com.xunfos.budgetcat.scraper.model
+package com.xunfos.budgetcat.worker.model
 
 import java.sql.Timestamp
 import java.util.UUID

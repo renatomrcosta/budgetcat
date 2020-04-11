@@ -2,6 +2,8 @@ version: '3'
 
 services:
   scraper:
+    networks:
+      - scraper
     build:
       ./scraper
     image:
@@ -12,3 +14,61 @@ services:
       - 8080
     env_file:
       - ./scraper/.env
+
+  storage:
+    env_file:
+      - ./storage/.env
+    networks:
+      - storage
+      - db
+    build:
+      ./storage
+    image:
+      budgetcat-storage
+    ports:
+      - 9998:8080
+    depends_on:
+      - db
+    expose:
+      - 8080
+
+  db:
+    image:
+      postgres
+    networks:
+      - db
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    env_file:
+      - ./storage/.env
+    volumes:
+      - ./budgetcat_postgres_data_container:/data/budgetcat/db
+
+  worker:
+    env_file:
+      - ./worker/.env
+    networks:
+      - storage
+      - scraper
+    image:
+      budgetcat-worker
+    build:
+      ./worker
+    ports:
+      - 9997:8080
+    depends_on:
+      - storage
+      - scraper
+    expose:
+      - 8080
+
+
+networks:
+  storage:
+  scraper:
+  db:
+
+volumes:
+  budgetcat_postgres_data_container:

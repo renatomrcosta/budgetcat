@@ -17,12 +17,14 @@ class ScraperController(
     fun scrape(
         @RequestParam("provider") provider: String?,
         @RequestParam("start_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startDate: LocalDate,
-        @RequestParam("end_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate
+        @RequestParam("end_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endDate: LocalDate,
+        @RequestParam("limit") limit: Int?
     ): ResponseEntity<List<Transaction>> {
         val response = scraperHandler(
             provider = provider,
             startDate = startDate,
-            endDate = endDate
+            endDate = endDate,
+            limit = limit
         )
         return ResponseEntity.ok(response)
     }
