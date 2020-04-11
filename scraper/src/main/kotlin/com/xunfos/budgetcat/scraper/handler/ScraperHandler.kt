@@ -13,7 +13,8 @@ class ScraperHandler(
     operator fun invoke(
         provider: String?,
         startDate: LocalDate,
-        endDate: LocalDate
+        endDate: LocalDate,
+        limit: Int?
     ): List<Transaction> =
         runBlocking {
             if (startDate.isAfter(endDate)) {
@@ -22,7 +23,8 @@ class ScraperHandler(
             when (provider?.toUpperCase()) {
                 "N26", null -> n26Client.fetchTransactions(
                     startDate = startDate,
-                    endDate = endDate
+                    endDate = endDate,
+                    limit = limit
                 )
                 else -> error("Invalid provider")
             }

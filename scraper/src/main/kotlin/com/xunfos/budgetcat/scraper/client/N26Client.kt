@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitExchange
 import java.time.LocalDate
+import java.time.ZoneOffset
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -25,7 +26,8 @@ class N26Client(
 
     suspend fun fetchTransactions(
         startDate: LocalDate,
-        endDate: LocalDate
+        endDate: LocalDate,
+        limit: Int?
     ): List<Transaction> = coroutineScope {
         session.executeTransaction { token ->
             WebClient
@@ -37,14 +39,14 @@ class N26Client(
                 }
                 .build()
                 .get()
-                .uri(
-                    TRANSACTIONS_URI,
-                    mapOf<String, Any>(
-                        LIMIT_PARAMETER to LIMIT_PARAMETER_VALUE,
-                        FROM_PARAMETER to startDate,
-                        TO_PARAMETER to endDate
-                    )
-                )
+                .uri {
+                    it
+                        .path(TRANSACTIONS_URI)
+                        .queryParam(LIMIT_PARAMETER, (limit ?: DEFAULT_LIMIT))
+                        .queryParam(FROM_PARAMETER, startDate.toEpochMilli())
+                        .queryParam(TO_PARAMETER, endDate.toEpochMilli())
+                        .build()
+                }
                 .awaitExchange()
                 .bodyToFlux(Transaction.N26Transaction::class.java)
                 .collectList()
@@ -57,6 +59,9 @@ class N26Client(
         const val FROM_PARAMETER = "from"
         const val TO_PARAMETER = "to"
         const val LIMIT_PARAMETER = "limit"
-        const val LIMIT_PARAMETER_VALUE = "2000"
+        const val DEFAULT_LIMIT = 100000
     }
 }
+
+private fun LocalDate.toEpochMilli(): Long =
+    atStartOfDay().atZone(ZoneOffset.systemDefault()).toInstant().toEpochMilli()
