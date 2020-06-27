@@ -4,7 +4,6 @@ import com.xunfos.budgetcat.scraper.client.N26AuthClient
 import com.xunfos.budgetcat.scraper.model.BearerTokenResponse
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.reactive.awaitFirst
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.time.Instant
@@ -16,9 +15,12 @@ data class N26Session(var token: BearerTokenResponse) {
         Mutex()
 
     private fun hasAuthorizedSession(): Boolean {
-        return Instant.now().isBefore(refreshedAt.plus(token.expires_in.toLong(),
-            ChronoUnit.SECONDS
-        ))
+        return Instant.now().isBefore(
+            refreshedAt.plus(
+                token.expires_in.toLong(),
+                ChronoUnit.SECONDS
+            )
+        )
     }
 
     suspend fun <T> executeTransaction(block: suspend (accessToken: String) -> T): T =
@@ -39,15 +41,14 @@ data class N26Session(var token: BearerTokenResponse) {
     }
 
     companion object {
-        fun newSession(n26AuthClient: N26AuthClient): N26Session =
-            runBlocking {
-                val mfaTokenResponse = n26AuthClient.requestMFAToken().awaitFirst()
-                n26AuthClient.request2FA(mfaTokenResponse)
-                val bearerTokenResponse = n26AuthClient.confirm2FA(mfaTokenResponse)
+        suspend fun newSession(n26AuthClient: N26AuthClient): N26Session = coroutineScope {
+            val mfaTokenResponse = n26AuthClient.requestMFAToken().awaitFirst()
+            n26AuthClient.request2FA(mfaTokenResponse)
+            val bearerTokenResponse = n26AuthClient.confirm2FA(mfaTokenResponse)
 
-                N26Session(token = bearerTokenResponse).also {
-                    it.updateTimeout()
-                }
+            N26Session(token = bearerTokenResponse).also {
+                it.updateTimeout()
             }
+        }
     }
 }
