@@ -3,8 +3,13 @@ package com.xunfos.budgetcat.scraper.client
 import com.xunfos.budgetcat.scraper.config.N26Config
 import com.xunfos.budgetcat.scraper.model.Transaction
 import com.xunfos.budgetcat.scraper.session.N26Session
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.reactive.awaitLast
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.http.HttpHeaders
@@ -14,6 +19,7 @@ import org.springframework.web.reactive.function.client.awaitExchange
 import java.time.LocalDate
 import java.time.ZoneOffset
 
+
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 class N26Client(
@@ -21,15 +27,17 @@ class N26Client(
     private val n26Config: N26Config
 ) : TransactionClient() {
     private val session: N26Session by lazy {
-        N26Session.newSession(n26AuthClient = n26AuthClient)
+        runBlocking {
+            N26Session.newSession(n26AuthClient = n26AuthClient)
+        }
     }
 
     suspend fun fetchTransactions(
         startDate: LocalDate,
         endDate: LocalDate,
         limit: Int?
-    ): List<Transaction> = coroutineScope {
-        session.executeTransaction { token ->
+    ): List<Transaction> {
+        return session.executeTransaction { token ->
             WebClient
                 .builder()
                 .baseUrl(n26Config.baseUrl)

@@ -20,7 +20,7 @@ Triggers a call to scrape transactions. Takes the following Query Parameters:
 
 `provider` -> String. Right now, only `n26` accepted
 
-limit` -> Long. As means to limit the amount of requests
+`limit` -> Long. As means to limit the amount of requests
 
 ## Environment variables
 APP_USERNAME: Username to be used by Spring security in this app (basic auth)
