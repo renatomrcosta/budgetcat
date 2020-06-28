@@ -14,28 +14,33 @@ import java.time.LocalDate
 class ScraperClient(
     private val scraperConfig: ScraperConfig
 ) {
+    private val webClient: WebClient by lazy {
+        WebClient
+            .builder()
+            .baseUrl(scraperConfig.host)
+            .build()
+    }
+
     suspend fun scrape(
         provider: WorkerOptions.Provider,
         startDate: LocalDate,
         endDate: LocalDate,
         limit: Int?
     ): List<Transaction.N26Transaction> = coroutineScope {
-        val transaction = WebClient
-            .builder()
-            .baseUrl(scraperConfig.host)
-            .build()
-            .get()
-            .uri {
-                it.path(SCRAPER_URI)
-                    .queryParam(START_DATE_PARAMETER, startDate)
-                    .queryParam(END_DATE_PARAMETER, endDate)
-                    .queryParam(PROVIDER_PARAMETER, provider.value)
-                    .queryParam(LIMIT_PARAMETER, limit ?: DEFAULT_LIMIT)
-                    .build()
-            }
-            .headers {
-                it.setBasicAuth(scraperConfig.username, scraperConfig.password)
-            }
+        val transaction =
+            webClient
+                .get()
+                .uri {
+                    it.path(SCRAPER_URI)
+                        .queryParam(START_DATE_PARAMETER, startDate)
+                        .queryParam(END_DATE_PARAMETER, endDate)
+                        .queryParam(PROVIDER_PARAMETER, provider.value)
+                        .queryParam(LIMIT_PARAMETER, limit ?: DEFAULT_LIMIT)
+                        .build()
+                }
+                .headers {
+                    it.setBasicAuth(scraperConfig.username, scraperConfig.password)
+                }
 
         transaction
             .awaitExchange()
