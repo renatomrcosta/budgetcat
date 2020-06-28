@@ -11,11 +11,15 @@ import java.util.UUID
 class StorageClient(
     private val storageConfig: StorageConfig
 ) {
-    suspend fun store(id: UUID, data: Any) = coroutineScope {
+    private val webClient: WebClient by lazy {
         WebClient
             .builder()
             .baseUrl(storageConfig.host)
             .build()
+    }
+
+    suspend fun store(id: UUID, data: Any) = coroutineScope {
+        webClient
             .post()
             .uri {
                 it
