@@ -18,7 +18,7 @@ class TransactionController(
     private val listTransactionHandler: ListTransactionHandler
 ) {
     @PostMapping
-    fun registerTransaction(
+    suspend fun registerTransaction(
         @RequestParam("id") id: UUID,
         @RequestBody transaction: Any
     ): ResponseEntity<UUID> {
@@ -30,7 +30,7 @@ class TransactionController(
     }
 
     @GetMapping
-    fun listTransactions(): ResponseEntity<List<Any>> {
+    suspend fun listTransactions(): ResponseEntity<List<Any>> {
         val response = listTransactionHandler.invoke()
         return ResponseEntity.ok(response)
     }
