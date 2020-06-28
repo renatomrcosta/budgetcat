@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.flywaydb:flyway-core:6.3.3")
     implementation("org.postgresql:postgresql:42.2.12")
     implementation("org.json:json:20190722")

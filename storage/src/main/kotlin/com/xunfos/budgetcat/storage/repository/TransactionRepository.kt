@@ -59,7 +59,7 @@ class TransactionRepository(
                 }
             }
 
-        transactionList
+        transactionList.toList()
     }
 }
 
