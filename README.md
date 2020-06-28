@@ -6,7 +6,7 @@ For the initial commits, very specific implementations will be used. I can gener
 
 ## Parts
 
-* Scraper - connects to the bank / transaction holder and returns the transaction data via a GET endpoint
+* Scraper - connects to the bank / transaction holder and returns the transaction data via a GET endpoint (note: as of June 2020, the n26 API has changed slighly and the request for MFA does not work at the moment)
 
 * Storage - Stores transaction data in a Postgres DB, using a JSONB column
 
