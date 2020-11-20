@@ -5,5 +5,7 @@
 ### Gradle ###
 gradlew
 gradlew.bat
-./gradle
+.gradle/
 gradle/
+
+/build/
